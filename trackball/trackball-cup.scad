@@ -138,14 +138,37 @@ module subtract_lens_for_laser() {
     }
 }
 
+module insert_holes(){
+    translate([15.5,15.5,0]) cylinder(4,1.6,1.6, center=true);
+    translate([15.5,-15.5,0]) cylinder(4,1.6,1.6, center=true);
+    translate([-15.5,15.5,0]) cylinder(4,1.6,1.6, center=true);
+    translate([-15.5,-15.5,0]) cylinder(4,1.6,1.6, center=true);
+}
+
 module cup(){
-    difference(){
+    centering_for_optical_center=21.35/2-10.97;
+    translate([centering_for_optical_center,0,$lens_thickness+1]) difference(){
         cup_with_claw();
         subtract_support_holders(1.02);
-        translate([0,0,-1-$lens_thickness])subtract_lens();
+        translate([0,0,-1-$lens_thickness]) subtract_lens();
         translate([0,0,-1-$lens_thickness]) subtract_lens_for_laser();
+        translate([0,0,1-$lens_thickness]) insert_holes();
     }
 }
+
+module sensor_hole(){
+    sensor_hole_width=10.7;
+    sensor_hole_length=17.26;
+    centering_for_optical_center=sensor_hole_length/2-8.44;
+    sensor_hole_x_offset=centering_for_optical_center;
+    translate([sensor_hole_x_offset,0,0]) cube([sensor_hole_length,sensor_hole_width,0.01], center=true);
+}
+
 cup();
 //support_holders();
 //support_holder();
+
+// for debug
+//projection(cut=false) sensor_hole();
+//projection(cut=false) translate([0,0,+$lens_thickness]) difference(){cup();cube([30,30,100],center=true);};
+
